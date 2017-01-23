@@ -9,8 +9,7 @@ alphanumeric = RegexValidator(r'^[0-9a-zA-Z]*$', 'Only alphanumeric characters a
 class Photo(models.Model):
     photo_id = models.CharField(max_length=20,
                                 unique=True,
-                                primary_key=True,
-                                validators=[alphanumeric])
+                                primary_key=True)
     created_at = models.DateTimeField('date published', null=False)
     color = models.CharField(max_length=7, null=True, default="#ECFFC4")
     exif_make = models.CharField(max_length=50, null=True, default="null")

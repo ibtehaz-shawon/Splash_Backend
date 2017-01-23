@@ -10,18 +10,19 @@ from unsplash.serializer import PhotoSerializer
 from unsplash_backend.settings import UNSPLASH_ID, UNSPLASH_BASE_URL
 
 
+
 def index(req):
-    for page_number in range(0, 5):
+    for page_number in range(1, 6, 1):
         random_feed = requests.get(UNSPLASH_BASE_URL + 'photos/?client_id=' + UNSPLASH_ID+'&page='+str(page_number))
         if random_feed.text == '403 Forbidden (Rate Limit Exceeded)':
-            print "$$$$ ---- LIMIT EXCEEDED ---- $$$$"
+            print "$$$$ ---- LIMIT EXCEEDED ---- $$$$ in "+str(page_number)
+            break
         else:
             feed_array = random_feed.json()
             for x in range(0, 9):
                 current_photo_id = feed_array[x]['id']
-                print 'Parsing '+current_photo_id
                 photo_details_url = requests.get(UNSPLASH_BASE_URL + 'photos/' + current_photo_id + '?client_id=' + UNSPLASH_ID)
-                single_photo_details(photo_details_url.json())
+                single_photo_details(photo_details_url.json(), page_number)
     return HttpResponse("Hello World")
 
 
@@ -35,7 +36,9 @@ def getFeed(req):
 functions take one parameter (photo_data) in JSON format and parses, create a dictionary and send it to
 Model (Photo) via Serializer.
 """
-def single_photo_details(photo_data):
+
+
+def single_photo_details(photo_data, counter):
     # ---------------------------------------------
     # Dumping the only necessary data in temporary variable
     # ---------------------------------------------
@@ -87,6 +90,7 @@ def single_photo_details(photo_data):
     serialized_data = PhotoSerializer(data=data)
     if serialized_data.is_valid():
         serialized_data.save()
-        print "Success"
+        print "$$$$$$ Current Counter is "+str(counter)+" and Success for "+photo_id
     else:
+        print "###### Current Counter is " + str(counter)+" and ERROR for 4040404040404"+ photo_id
         print serialized_data.errors
