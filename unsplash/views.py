@@ -1,14 +1,18 @@
 from django.contrib.sites import requests
 from django.http import HttpResponse
-from django.shortcuts import render
 from unsplash.models import Photo
-from django.core import serializers
 import requests
 import json
 
 from unsplash.serializer import PhotoSerializer
 from unsplash_backend.settings import UNSPLASH_ID, UNSPLASH_BASE_URL
 
+"""
+This function originally does not take any request from production, only work to insert more item in the
+ database
+:req
+:return SUCCESS message for Successful database input
+"""
 
 
 def index(req):
@@ -26,28 +30,43 @@ def index(req):
     return HttpResponse("Hello World")
 
 
-def getFeed(req):
-    latest_photos = Photo.objects.order_by('-created_at')
-    counter = 0
+"""
+functions takes a GET arguments and returned the latest_photos sorted by created_at at ascending order.
+:requests GET
+:return feed data ALL at once.
+"""
 
-    response_data = []
-    photo_data = []
-    unsplash_photos = {}
-    new_photo_data = {}
-    for q in latest_photos:
-        print q.photo_id + " : " + str(counter)
-        counter += 1
-        new_photo_data['photo_id'] = q.photo_id
-        photo_data.append(new_photo_data)
-    # photo_data = serializers.serialize("json", photo_data)
-    unsplash_photos['photo'] = photo_data
-    response_data.append(unsplash_photos)
-    return HttpResponse(response_data, content_type='application/json')
+
+def get_feed(req):
+    if req.method == 'GET':
+        latest_photos = Photo.objects.order_by('-created_at')
+        response_data = {}
+        photo_data = []
+        counter = 0
+
+        for entry in latest_photos:
+            counter += 1
+            new_photo_data = {'photo_id': str(entry.photo_id), 'created_at': str(entry.created_at),
+                              'color': str(entry.color),
+                              'url_raw': str(entry.url_raw), 'url_full': str(entry.url_full),
+                              'url_regular': str(entry.url_regular),
+                              'url_download': str(entry.url_download), 'url_share': str(entry.url_share),
+                              'user_display_name': entry.user_display_name, 'user_profile_pic': str(entry.user_profile_pic),
+                              'photo_category': str(entry.photo_category)}
+            photo_data.append(new_photo_data)
+
+        response_data['total'] = counter
+        response_data['photo'] = photo_data
+        return HttpResponse(json.dumps(response_data), content_type='application/json')
+    else:
+        error_response = {'error': 'error occurred', 'message': 'unknown method'}
+        return HttpResponse(json.dump(error_response), content_type='application/json')
 
 """
 functions take one parameter (photo_data) in JSON format and parses, create a dictionary and send it to
 Model (Photo) via Serializer.
 """
+
 
 def single_photo_details(photo_data, counter):
     # ---------------------------------------------
