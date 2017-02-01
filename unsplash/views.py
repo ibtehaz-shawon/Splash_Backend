@@ -28,15 +28,26 @@ def index(req):
 
 def getFeed(req):
     latest_photos = Photo.objects.order_by('-created_at')
-    output = serializers.serialize("json", latest_photos)
-    return HttpResponse(output, content_type='application/json')
+    counter = 0
 
+    response_data = []
+    photo_data = []
+    unsplash_photos = {}
+    new_photo_data = {}
+    for q in latest_photos:
+        print q.photo_id + " : " + str(counter)
+        counter += 1
+        new_photo_data['photo_id'] = q.photo_id
+        photo_data.append(new_photo_data)
+    # photo_data = serializers.serialize("json", photo_data)
+    unsplash_photos['photo'] = photo_data
+    response_data.append(unsplash_photos)
+    return HttpResponse(response_data, content_type='application/json')
 
 """
 functions take one parameter (photo_data) in JSON format and parses, create a dictionary and send it to
 Model (Photo) via Serializer.
 """
-
 
 def single_photo_details(photo_data, counter):
     # ---------------------------------------------
