@@ -23,7 +23,11 @@ def index(req):
             print "$$$$ ---- LIMIT EXCEEDED ---- $$$$ in " + str(page_number)
             break
         else:
-            feed_array = random_feed.json()
+            try:
+                feed_array = random_feed.json()
+            except ValueError as error:
+                print "No JSON file "+str(error)
+                return HttpResponse(str(error))
             for x in range(0, 9):
                 current_photo_id = feed_array[x]['id']
                 photo_details_url = requests.get(
