@@ -110,58 +110,61 @@ Model (Photo) via Serializer.
 
 
 def single_photo_details(photo_data, counter):
-    # ---------------------------------------------
-    # Dumping the only necessary data in temporary variable
-    # ---------------------------------------------
-    photo_id = photo_data['id']
-    created_at = photo_data['created_at']
-    color = photo_data['color']
+    try:
+        # ---------------------------------------------
+        # Dumping the only necessary data in temporary variable
+        # ---------------------------------------------
+        photo_id = photo_data['id']
+        created_at = photo_data['created_at']
+        color = photo_data['color']
 
-    exif_make = photo_data['exif']['make']
-    if len(exif_make) > 50:
-        exif_make = exif_make[:50]
-    exif_model = photo_data['exif']['model']
-    exif_exposure = photo_data['exif']['exposure_time']
-    exif_aparture = photo_data['exif']['aperture']
-    exif_focal = photo_data['exif']['focal_length']
-    exif_iso = photo_data['exif']['iso']
+        exif_make = photo_data['exif']['make']
+        if len(exif_make) > 50:
+            exif_make = exif_make[:50]
+        exif_model = photo_data['exif']['model']
+        exif_exposure = photo_data['exif']['exposure_time']
+        exif_aparture = photo_data['exif']['aperture']
+        exif_focal = photo_data['exif']['focal_length']
+        exif_iso = photo_data['exif']['iso']
 
-    if 'location' in photo_data:
-        location_name = photo_data['location']['title']
-        if len(location_name) > 100:
-            location_name = location_name[:100]
-        location_lat = photo_data['location']['position']['latitude']
-        location_long = photo_data['location']['position']['longitude']
-    else:
-        location_name = "null"
-        location_lat = -1
-        location_long = -1
+        if 'location' in photo_data:
+            location_name = photo_data['location']['title']
+            if len(location_name) > 100:
+                location_name = location_name[:100]
+            location_lat = photo_data['location']['position']['latitude']
+            location_long = photo_data['location']['position']['longitude']
+        else:
+            location_name = "null"
+            location_lat = -1
+            location_long = -1
 
-    url_full = photo_data['urls']['full']
-    url_regular = photo_data['urls']['regular']
-    url_download = photo_data['links']['download']
-    url_share = photo_data['links']['html']
+        url_full = photo_data['urls']['full']
+        url_regular = photo_data['urls']['regular']
+        url_download = photo_data['links']['download']
+        url_share = photo_data['links']['html']
 
-    user_display_name = photo_data['user']['name']
-    if len(user_display_name) > 100:
-        user_display_name = user_display_name[:100]
-    user_profile_pic = photo_data['user']['profile_image']['medium']
-    # ---------------------------------------------
-    # Inserting dump into a dictionary to insert---
-    # ---------------------------------------------
-    data = {'photo_id': photo_id, 'created_at': created_at, 'color': color, 'exif_make': exif_make,
-            'exif_model': exif_model, 'exif_exposure': exif_exposure, 'exif_aparture': exif_aparture,
-            'exif_focul': exif_focal, 'exif_iso': exif_iso, 'location_name': location_name,
-            'location_lat': location_lat, 'location_long': location_long, 'url_raw': url_full, 'url_full': url_full,
-            'url_regular': url_regular, 'url_download': url_download, 'url_share': url_share,
-            'user_display_name': user_display_name, 'user_profile_pic': user_profile_pic}
-    # ---------------------------------------------
-    # check serialize validation and insert--------
-    # ---------------------------------------------
-    serialized_data = PhotoSerializer(data=data)
-    if serialized_data.is_valid():
-        serialized_data.save()
-        print "$$$$$$ Current Counter is " + str(counter) + " and Success for " + photo_id
-    else:
-        print "###### Current Counter is " + str(counter) + " and ERROR for 4040404040404" + photo_id
-        print serialized_data.errors
+        user_display_name = photo_data['user']['name']
+        if len(user_display_name) > 100:
+            user_display_name = user_display_name[:100]
+        user_profile_pic = photo_data['user']['profile_image']['medium']
+        # ---------------------------------------------
+        # Inserting dump into a dictionary to insert---
+        # ---------------------------------------------
+        data = {'photo_id': photo_id, 'created_at': created_at, 'color': color, 'exif_make': exif_make,
+                'exif_model': exif_model, 'exif_exposure': exif_exposure, 'exif_aparture': exif_aparture,
+                'exif_focul': exif_focal, 'exif_iso': exif_iso, 'location_name': location_name,
+                'location_lat': location_lat, 'location_long': location_long, 'url_raw': url_full, 'url_full': url_full,
+                'url_regular': url_regular, 'url_download': url_download, 'url_share': url_share,
+                'user_display_name': user_display_name, 'user_profile_pic': user_profile_pic}
+        # ---------------------------------------------
+        # check serialize validation and insert--------
+        # ---------------------------------------------
+        serialized_data = PhotoSerializer(data=data)
+        if serialized_data.is_valid():
+            serialized_data.save()
+            print "$$$$$$ Current Counter is " + str(counter) + " and Success for " + photo_id
+        else:
+            print "###### Current Counter is " + str(counter) + " and ERROR for 4040404040404" + photo_id
+            print serialized_data.errors
+    except ValueError as error:
+        print "Error occurred "+str(error)
