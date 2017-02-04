@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from unsplash.models import Photo
 import requests
 import json
+import unicodedata
 
 from unsplash.serializer import PhotoSerializer
 from unsplash_backend.settings import UNSPLASH_ID, UNSPLASH_BASE_URL
@@ -11,29 +12,34 @@ from unsplash_backend.settings import UNSPLASH_ID, UNSPLASH_BASE_URL
 This function originally does not take any request from production, only work to insert more item in the
  database
 :req
-:return SUCCESS message for Successful database input
+:return SUCCESS message for successful database input
 """
 
 
 def index(req):
     for page_number in range(1, 6, 1):
-        random_feed = requests.get(UNSPLASH_BASE_URL + 'photos/?client_id=' + UNSPLASH_ID+'&page='+str(page_number))
+        random_feed = requests.get(UNSPLASH_BASE_URL + 'photos/?client_id=' + UNSPLASH_ID + '&page=' + str(page_number))
         if random_feed.text == '403 Forbidden (Rate Limit Exceeded)':
-            print "$$$$ ---- LIMIT EXCEEDED ---- $$$$ in "+str(page_number)
+            print "$$$$ ---- LIMIT EXCEEDED ---- $$$$ in " + str(page_number)
             break
         else:
             feed_array = random_feed.json()
             for x in range(0, 9):
                 current_photo_id = feed_array[x]['id']
-                photo_details_url = requests.get(UNSPLASH_BASE_URL + 'photos/' + current_photo_id + '?client_id=' + UNSPLASH_ID)
+                photo_details_url = requests.get(
+                    UNSPLASH_BASE_URL + 'photos/' + current_photo_id + '?client_id=' + UNSPLASH_ID)
                 single_photo_details(photo_details_url.json(), page_number)
     return HttpResponse("Hello World")
 
 
 """
 functions takes a GET arguments and returned the latest_photos sorted by created_at at ascending order.
+pagination implemented to send 10 data at once.
 :requests GET
-:return feed data ALL at once.
+:page url parameter, default 1;
+:return
+feed data ALL at once.
+feed data 10 at a time. [updated]
 """
 
 
@@ -43,24 +49,55 @@ def get_feed(req):
         response_data = {}
         photo_data = []
         counter = 0
+        try:
+            current_page = int(req.GET.get('page', "1"))
+            print req.GET.get('page', "1")
+        except ValueError as error:
+            current_page = 1
+            print str(error)
+
+        upper_limit = int(current_page * 10)
+        lower_limit = int(upper_limit) - 10 + 1
+        total = 0
 
         for entry in latest_photos:
             counter += 1
-            new_photo_data = {'photo_id': str(entry.photo_id), 'created_at': str(entry.created_at),
-                              'color': str(entry.color),
-                              'url_raw': str(entry.url_raw), 'url_full': str(entry.url_full),
-                              'url_regular': str(entry.url_regular),
-                              'url_download': str(entry.url_download), 'url_share': str(entry.url_share),
-                              'user_display_name': entry.user_display_name, 'user_profile_pic': str(entry.user_profile_pic),
-                              'photo_category': str(entry.photo_category)}
-            photo_data.append(new_photo_data)
+            if lower_limit <= counter <= upper_limit:
+                new_photo_data = {'photo_id': str(entry.photo_id),
+                                  'created_at': str(entry.created_at),
+                                  'color': str(entry.color),
 
-        response_data['total'] = counter
+                                  'user_camera_make': str(entry.exif_make),
+                                  'user_camera_model': str(entry.exif_model),
+                                  'user_camera_exposure': str(entry.exif_exposure),
+                                  'user_camera_apature': str(entry.exif_aparture),
+                                  'user_camera_focal': str(entry.exif_focul),
+                                  'user_camera_iso': str(entry.exif_iso),
+
+                                  'photo_location_name': unicodedata.normalize('NFKD', entry.location_name).encode('ascii',
+                                                                                                                   'ignore'),
+                                  'photo_location_lat': str(entry.location_lat),
+                                  'photo_location_long': str(entry.location_long),
+
+                                  'url_raw': str(entry.url_raw),
+                                  'url_full': str(entry.url_full),
+                                  'url_regular': str(entry.url_regular),
+                                  'url_download': str(entry.url_download),
+                                  'url_share': str(entry.url_share),
+
+                                  'user_display_name': entry.user_display_name,
+                                  'user_profile_pic': str(entry.user_profile_pic),
+                                  'photo_category': str(entry.photo_category)}
+                photo_data.append(new_photo_data)
+                total += 1
+
+        response_data['total'] = total
         response_data['photo'] = photo_data
         return HttpResponse(json.dumps(response_data), content_type='application/json')
     else:
         error_response = {'error': 'error occurred', 'message': 'unknown method'}
         return HttpResponse(json.dump(error_response), content_type='application/json')
+
 
 """
 functions take one parameter (photo_data) in JSON format and parses, create a dictionary and send it to
@@ -106,7 +143,7 @@ def single_photo_details(photo_data, counter):
         user_display_name = user_display_name[:100]
     user_profile_pic = photo_data['user']['profile_image']['medium']
     # ---------------------------------------------
-    # Inserting dump into a dictionary to insert
+    # Inserting dump into a dictionary to insert---
     # ---------------------------------------------
     data = {'photo_id': photo_id, 'created_at': created_at, 'color': color, 'exif_make': exif_make,
             'exif_model': exif_model, 'exif_exposure': exif_exposure, 'exif_aparture': exif_aparture,
@@ -120,7 +157,7 @@ def single_photo_details(photo_data, counter):
     serialized_data = PhotoSerializer(data=data)
     if serialized_data.is_valid():
         serialized_data.save()
-        print "$$$$$$ Current Counter is "+str(counter)+" and Success for "+photo_id
+        print "$$$$$$ Current Counter is " + str(counter) + " and Success for " + photo_id
     else:
-        print "###### Current Counter is " + str(counter)+" and ERROR for 4040404040404"+ photo_id
+        print "###### Current Counter is " + str(counter) + " and ERROR for 4040404040404" + photo_id
         print serialized_data.errors
