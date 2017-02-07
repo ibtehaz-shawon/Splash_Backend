@@ -83,9 +83,11 @@ WSGI_APPLICATION = 'unsplash_backend.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'USER': 'postgres',
-        'NAME': 'postgres',
-        'PASSWORD': '123456',
+        'HOST': 'ec2-23-23-225-116.compute-1.amazonaws.com',
+        'USER': 'qtfejzbnrmuhxd',
+        'NAME': 'deg9iiebd2oa7r',
+        'PASSWORD': '8ebfd7af9d8a72cf24a369afc908c00865ea828172479a7c204fa583aa59be82',
+        'PORT': '5432',
     },
 }
 
