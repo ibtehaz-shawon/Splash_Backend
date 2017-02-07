@@ -30,7 +30,10 @@ UNSPLASH_BASE_URL = 'https://api.unsplash.com/'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'https://python-splash.herokuapp.com/',
+    'python-splash.herokuapp.com/',
+]
 
 
 # Application definition
