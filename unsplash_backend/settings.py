@@ -31,8 +31,8 @@ UNSPLASH_BASE_URL = 'https://api.unsplash.com/'
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    'https://python-splash.herokuapp.com/',
     'python-splash.herokuapp.com/',
+    'https://python-splash.herokuapp.com/',
 ]
 
 
