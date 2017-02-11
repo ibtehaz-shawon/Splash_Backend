@@ -2,7 +2,7 @@
 #
 # Secret Labs' Regular Expression Engine
 #
-# convert template to internal format
+# convert templates to internal format
 #
 # Copyright (c) 1997-2001 by Secret Labs AB.  All rights reserved.
 #
@@ -113,7 +113,7 @@ def _compile(code, pattern, flags):
                 emit(OPCODES[ANY])
         elif op in REPEATING_CODES:
             if flags & SRE_FLAG_TEMPLATE:
-                raise error, "internal: unsupported template operator"
+                raise error, "internal: unsupported templates operator"
                 emit(OPCODES[REPEAT])
                 skip = _len(code); emit(0)
                 emit(av[0])

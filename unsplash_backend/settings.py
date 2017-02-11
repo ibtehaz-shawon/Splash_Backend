@@ -23,8 +23,10 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = '$(bi@q9h3-kqdk3)2+$@bkunic79(a3lfk2acx9wpnp440a3w9'
-# UNSPLASH_ID = 'badb97318ed82cec37d0fb85539b695a3d183a9ca6d2fd97bb4d10289b9ff0fe'
-UNSPLASH_ID = '315bdb58e7c9bdfb40ccf17e566abaed60d7377b7dc727f3c4cf2a91306e386d'
+# Beyblade ID
+UNSPLASH_ID = 'badb97318ed82cec37d0fb85539b695a3d183a9ca6d2fd97bb4d10289b9ff0fe'
+# Pokemon ID
+# UNSPLASH_ID = '315bdb58e7c9bdfb40ccf17e566abaed60d7377b7dc727f3c4cf2a91306e386d'
 UNSPLASH_BASE_URL = 'https://api.unsplash.com/'
 
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -65,9 +67,12 @@ TEMPLATES = [
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
+                'django.template.context_processors.debug',
+                'django.template.context_processors.i18n',
+                'django.template.context_processors.media',
+                'django.template.context_processors.static',
+                'django.template.context_processors.tz',
                 'django.contrib.messages.context_processors.messages',
             ],
         },

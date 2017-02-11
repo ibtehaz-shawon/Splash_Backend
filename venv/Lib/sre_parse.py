@@ -805,7 +805,7 @@ def parse_template(source, pattern):
                 literal(this)
         else:
             literal(this)
-    # convert template to groups and literals lists
+    # convert templates to groups and literals lists
     i = 0
     groups = []
     groupsappend = groups.append
