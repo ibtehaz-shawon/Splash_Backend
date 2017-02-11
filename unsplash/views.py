@@ -164,7 +164,7 @@ def single_photo_details(photo_data, counter):
             serialized_data.save()
             print "$$$$$$ Current Counter is " + str(counter) + " and Success for " + photo_id
         else:
-            print "###### Current Counter is " + str(counter) + " and ERROR for 4040404040404" + photo_id
+            print "###### Current Counter is " + str(counter) + " and ERROR for ||" + photo_id + "||"
             print serialized_data.errors
     except ValueError as error:
         print "Error occurred "+str(error)
