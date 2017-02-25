@@ -14,18 +14,70 @@
 </head>
 <body>
     <div class="container">
-        {% if message %}
-            <h2> Hello World </h2>
-        {% endif %}
-
         <div class="row">
-            <ol class="list-group">
-                {% for photo in photos %}
-                <li>    {{ photo.photo_id }} || {{photo.created_at}} || {{photo.user_display_name}} </li>
-                {% endfor %}
-            </ol>
+            {% if message %}
+                <h2> {{message}} - {{total_photos}} Photos </h2>
+            {% endif %}
+
+            <p style="font-size:1.5em">
+                {% if django_version %}
+                    Django version: {{django_version}}
+                    <br>
+                {% endif %}
+
+                {% if system_timezone %}
+                    System Timezone: {{system_timezone}}
+                    <br>
+                {% endif %}
+
+                {% if current_time %}
+                    Local Time: {{current_time}}
+                    <br>
+                {% endif %}
+
+                {% if debug_status %}
+                    Debug Status: {{debug_status}}
+                    <br>
+                {% endif %}
+
+                {% if system_language %}
+                    System Language: {{system_language}}
+                    <br>
+                {% endif %}
+            </p>
         </div>
 
+        <div class="row">
+            <div class="row">
+                <div class="col-md-4" style="font-size: 2em">
+                    <b>Photo ID </b>
+                </div>
+
+                <div class="col-md-4" style="font-size: 2em">
+                    <b>Created At </b>
+                </div>
+
+                <div class="col-md-4" style="font-size: 2em">
+                   <b> Creator Name </b>
+                </div>
+            </div>
+
+            {% for photo in photos %}
+                <div class="row">
+                    <div class="col-md-4" style="font-size: 1.2em">
+                         {{ photo.photo_id }}
+                    </div>
+
+                    <div class="col-md-4" style="font-size: 1.2em">
+                        {{photo.created_at}}
+                    </div>
+
+                    <div class="col-md-4" style="font-size: 1.2em">
+                        {{photo.user_display_name}}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
     </div>
 </body>
 </html>
