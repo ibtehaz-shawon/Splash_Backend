@@ -17,13 +17,13 @@ This function originally does not take any request from production, only work to
 
 CUSTOM_HEIGHT = 3840
 CUSTOM_WIDTH = 2000
-MAX_LOOP = 5
+MAX_LOOP = 6
 
 
 def index(req):
     total_success = 0
     total_failure = 0
-    for page_number in range(4, MAX_LOOP, 1):
+    for page_number in range(1, MAX_LOOP, 1):
         random_feed = requests.get(UNSPLASH_BASE_URL + 'photos/?client_id=' + BEYBLADE_ID + '&page=' + str(page_number))
         if random_feed.text == 'Rate Limit Exceeded':
             print "$$$$ ---- LIMIT EXCEEDED ---- $$$$ in " + str(page_number)
