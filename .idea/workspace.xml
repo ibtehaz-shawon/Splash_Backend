@@ -2,14 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d4ad6592-2d21-42d0-b739-4c97e67deb20" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/unsplash/index_view.py" afterPath="$PROJECT_DIR$/unsplash/index_view.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/unsplash/models.py" afterPath="$PROJECT_DIR$/unsplash/models.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/unsplash/templates/unsplash/index.html" afterPath="$PROJECT_DIR$/unsplash/templates/unsplash/index.html" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/unsplash/views.py" afterPath="$PROJECT_DIR$/unsplash/views.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/unsplash_backend/settings.py" afterPath="$PROJECT_DIR$/unsplash_backend/settings.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -24,11 +18,11 @@
   <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="375">
-      <file leaf-file-name="views.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="views.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/unsplash/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="232">
-              <caret line="40" column="40" lean-forward="true" selection-start-line="40" selection-start-column="12" selection-end-line="40" selection-end-column="40" />
+            <state relative-caret-position="416">
+              <caret line="25" column="30" lean-forward="false" selection-start-line="25" selection-start-column="30" selection-end-line="25" selection-end-column="30" />
               <folding>
                 <element signature="e#0#41#0" expanded="true" />
                 <element signature="e#2913#5842#0" expanded="false" />
@@ -69,11 +63,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="index.html" pinned="false" current-in-tab="true">
+      <file leaf-file-name="index.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/unsplash/templates/unsplash/index.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2592">
-              <caret line="81" column="7" lean-forward="true" selection-start-line="81" selection-start-column="7" selection-end-line="81" selection-end-column="7" />
+            <state relative-caret-position="-1900">
+              <caret line="11" column="34" lean-forward="false" selection-start-line="11" selection-start-column="34" selection-end-line="11" selection-end-column="34" />
               <folding>
                 <element signature="n#style#0;n#p#0;n#div#0;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
                 <element signature="n#style#0;n#div#0;n#div#0;n#div#1;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
@@ -142,9 +136,9 @@
         <option value="$PROJECT_DIR$/unsplash/urls.py" />
         <option value="$PROJECT_DIR$/unsplash/models.py" />
         <option value="$PROJECT_DIR$/unsplash_backend/settings.py" />
-        <option value="$PROJECT_DIR$/unsplash/views.py" />
         <option value="$PROJECT_DIR$/unsplash/index_view.py" />
         <option value="$PROJECT_DIR$/unsplash/templates/unsplash/index.html" />
+        <option value="$PROJECT_DIR$/unsplash/views.py" />
       </list>
     </option>
   </component>
@@ -729,17 +723,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/unsplash/views.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="232">
-          <caret line="40" column="40" lean-forward="true" selection-start-line="40" selection-start-column="12" selection-end-line="40" selection-end-column="40" />
-          <folding>
-            <element signature="e#0#41#0" expanded="true" />
-            <element signature="e#2913#5842#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/unsplash_backend/settings.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="115">
@@ -778,8 +761,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/unsplash/templates/unsplash/index.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2592">
-          <caret line="81" column="7" lean-forward="true" selection-start-line="81" selection-start-column="7" selection-end-line="81" selection-end-column="7" />
+        <state relative-caret-position="-1900">
+          <caret line="11" column="34" lean-forward="false" selection-start-line="11" selection-start-column="34" selection-end-line="11" selection-end-column="34" />
           <folding>
             <element signature="n#style#0;n#p#0;n#div#0;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
             <element signature="n#style#0;n#div#0;n#div#0;n#div#1;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
@@ -788,6 +771,17 @@
             <element signature="n#style#0;n#div#0;n#div#1;n#div#1;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
             <element signature="n#style#0;n#div#1;n#div#1;n#div#1;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
             <element signature="n#style#0;n#div#2;n#div#1;n#div#1;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/unsplash/views.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="416">
+          <caret line="25" column="30" lean-forward="false" selection-start-line="25" selection-start-column="30" selection-end-line="25" selection-end-column="30" />
+          <folding>
+            <element signature="e#0#41#0" expanded="true" />
+            <element signature="e#2913#5842#0" expanded="false" />
           </folding>
         </state>
       </provider>
