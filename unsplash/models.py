@@ -43,3 +43,9 @@ class Photo(models.Model):
 
     photo_height = models.CharField(max_length=5, null=False, default="none")
     photo_width = models.CharField(max_length=5, null=False, default="none")
+
+
+class DeviceData(models.Model):
+    device_id = models.CharField(max_length=100, unique=True, null=False)
+    device_height = models.CharField(max_length=100, null=False)
+    device_width = models.CharField(max_length=100, null=False)
