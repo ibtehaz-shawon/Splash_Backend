@@ -1,5 +1,7 @@
 from __future__ import unicode_literals
 
+import uuid
+
 from django.core.validators import RegexValidator
 from django.db import models
 
@@ -45,7 +47,10 @@ class Photo(models.Model):
     photo_width = models.CharField(max_length=5, null=False, default="none")
 
 
+#Device Data table
+
 class DeviceData(models.Model):
     device_id = models.CharField(max_length=100, unique=True, null=False)
     device_height = models.CharField(max_length=100, null=False)
     device_width = models.CharField(max_length=100, null=False)
+    unique_id = models.CharField(max_length=100, unique=True, default=uuid.uuid4, editable=False)
