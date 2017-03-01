@@ -1,11 +1,8 @@
 import json
 
-from django.forms import forms
 from django.http import HttpResponse
 from django.shortcuts import render_to_response, render
-from django.template import RequestContext
 from django.template import loader
-from django.views.decorators.csrf import csrf_exempt
 
 # http://stackoverflow.com/questions/30292540/posting-data-from-a-form-into-the-database-using-django
 # https://tutorial.djangogirls.org/en/django_forms/
@@ -31,19 +28,27 @@ def register_phone(request):
         form = RegisterForm(request.POST)
 
         response_data = {}
-        success_message = []
-        error_message = []
+        error_message = {}
 
         if form.is_valid():
             register = form.save()
-            print register
+            print register.unique_id
+
+            success_message = {
+                'unique_id': str(register.unique_id),
+                'message': 'successfully registered',
+            }
             form = RegisterForm()
             context = {
                 'form': form
             }
 
             # Add JSON response here
-            return render(request, template_file, context)
+            response_data['success'] = success_message
+            print response_data
+            return HttpResponse(json.dumps(response_data), content_type='application/json')
+            # open the following only if needed to view another view.
+            # return render(request, template_file, context)
         else:
             if len(device_id) == 0:
                 error_message.append("Device ID required")
@@ -55,10 +60,5 @@ def register_phone(request):
                 error_message.append("Device Height required")
                 print error_message
 
-        if len(error_message) > 0:
-            # error stayed
             response_data['error'] = error_message
-        else:
-            response_data['success'] = success_message
-
-        print response_data
+            return HttpResponse(json.dump(response_data), content_type='application/json')
