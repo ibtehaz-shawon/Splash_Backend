@@ -6,19 +6,23 @@
 
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/main.css">
 
     <!-- jQuery library -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 
     <!-- Latest compiled JavaScript -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <!--app specific js file-->
+    {% load static %}
+    <link rel="stylesheet" href="{% static '/unsplash/css/main.css' %}">
+    <script src="{% static '/unsplash/main.js'%}" type="javascript"></script>
 </head>
 <body>
     <div class="container">
         <div class="row"></div>
         <div class="col-md-4" style="margin-top:30px;">
-            <form class="form-inline" method="POST" action="http://127.0.0.1:8080/unsplash/register_phone">
+            <form id="form_register_phone" class="form-inline" method="POST" action="http://127.0.0.1:8080/unsplash/register_phone">
                  {% csrf_token %}
                 <div class="form-group" style="margin-top:10px;">
                     <label for="device_id">Device ID:</label>
@@ -34,7 +38,7 @@
                     <input type="text" class="form-control" id="device_width">
                 </div>
 
-                <button type="submit" class="btn btn-success" style="margin-top:10px;">Submit</button>
+                <button type="submit" class="btn btn-success" style="margin-top:10px;" id="register_phone">Submit</button>
             </form>
         </div>
     </div>
