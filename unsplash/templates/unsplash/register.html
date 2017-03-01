@@ -17,26 +17,44 @@
 <body>
     <div class="container">
         <div class="row"></div>
+
         <div class="col-md-4" style="margin-top:30px;">
-            <form class="form-inline" method="POST" action="http://127.0.0.1:8080/unsplash/register_phone">
-                 {% csrf_token %}
-                <div class="form-group" style="margin-top:10px;">
-                    <label for="device_id">Device ID:</label>
-                    <input type="text" class="form-control" id="device_id">
-                </div>
+            {% block content %}
+                <h3>New Post</h3>
+                <form method="POST" class="form-inline">{% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit" class="save btn btn-success">Save</button>
+                </form>
+            {% endblock %}
 
-                <div class="form-group" style="margin-top:10px;">
-                    <label for="device_height">Device Height:</label>
-                    <input type="text" class="form-control" id="device_height">
-                </div>
-                <div class="form-group" style="margin-top:10px;">
-                    <label for="device_width">Device Width:</label>
-                    <input type="text" class="form-control" id="device_width">
-                </div>
-
-                <button type="submit" class="btn btn-success" style="margin-top:10px;">Submit</button>
-            </form>
         </div>
     </div>
 </body>
+
+<script language="JavaScript">
+
+    function register_phone() {
+        $("#btn_register_phone").submit(function(e) {
+
+            var url = "http://127.0.0.1:8080/unsplash/register_phone";
+            console.log($("#form_register_phone").serialize());
+            console.log("baal");
+
+            $.ajax({
+                   type: "POST",
+                   url: url,
+                   data: $("#form_register_phone").serialize(),
+                   success: function(data) {
+                       alert(data);
+                   }
+                 });
+
+            e.preventDefault();
+        });
+    }
+
+</script>
+
 </html>
+
+
