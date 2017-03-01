@@ -8,14 +8,19 @@ from django.template import loader
 from django.views.decorators.csrf import csrf_exempt
 
 # http://stackoverflow.com/questions/30292540/posting-data-from-a-form-into-the-database-using-django
+# https://tutorial.djangogirls.org/en/django_forms/
+from unsplash.register_phone_form import RegisterForm
+
+
 def register_phone(request):
     template = loader.get_template('unsplash/register.html')
     template_file = "unsplash/register.html"
 
     if request.method == 'GET':
-        context_instance = RequestContext(request)
-        context = {}
-        print "GET Req"
+        form = RegisterForm()
+        context = {
+            'form': form
+        }
         return render(request, template_file, context)
 
     elif request.method == 'POST':
@@ -23,18 +28,22 @@ def register_phone(request):
         device_height = request.POST.get('device_height')
         device_width = request.POST.get('device_width')
 
-        print request.body
-        print device_height
-        print device_width
+        form = RegisterForm(request.POST)
 
         response_data = {}
         success_message = []
         error_message = []
 
-        if len(device_id) > 0 & len(device_height) > 0 & len(device_width) > 0:
-            # success
-            success = "Successful"
-            success_message.append(success)
+        if form.is_valid():
+            register = form.save()
+            print register
+            form = RegisterForm()
+            context = {
+                'form': form
+            }
+
+            # Add JSON response here
+            return render(request, template_file, context)
         else:
             if len(device_id) == 0:
                 error_message.append("Device ID required")
@@ -53,4 +62,3 @@ def register_phone(request):
             response_data['success'] = success_message
 
         print response_data
-        return render(request, template_file, response_data)
