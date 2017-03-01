@@ -44,31 +44,6 @@
         </div>
     </div>
 </body>
-
-<script language="JavaScript">
-
-    function register_phone() {
-        $("#btn_register_phone").submit(function(e) {
-
-            var url = "http://127.0.0.1:8080/unsplash/register_phone";
-            console.log($("#form_register_phone").serialize());
-            console.log("baal");
-
-            $.ajax({
-                   type: "POST",
-                   url: url,
-                   data: $("#form_register_phone").serialize(),
-                   success: function(data) {
-                       alert(data);
-                   }
-                 });
-
-            e.preventDefault();
-        });
-    }
-
-</script>
-
 </html>
 
 
