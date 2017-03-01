@@ -1,3 +1,5 @@
+import json
+
 from django.forms import forms
 from django.http import HttpResponse
 from django.shortcuts import render_to_response, render
@@ -26,7 +28,9 @@ def register_phone(request):
         device_height = request.POST.get('device_height')
         device_width = request.POST.get('device_width')
 
-        form = RegisterForm(request.POST)
+        print request.body
+        print device_height
+        print device_width
 
         response_data = {}
         success_message = []
