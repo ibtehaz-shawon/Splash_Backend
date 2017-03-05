@@ -49,6 +49,8 @@ class Photo(models.Model):
     photo_height = models.CharField(max_length=5, null=False, default="none")
     photo_width = models.CharField(max_length=5, null=False, default="none")
 
+    curated_id = models.ForeignKey('CuratedList', null=True)
+
 
 #Device Data table
 
