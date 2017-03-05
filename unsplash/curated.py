@@ -4,7 +4,7 @@ from django.http import HttpResponse
 import requests
 import json
 
-from unsplash.models import Photo
+from unsplash.models import Photo, CuratedList
 from unsplash.serializer import PhotoSerializer, CuratedSerializer
 from unsplash_backend.settings import BEYBLADE_ID, UNSPLASH_BASE_URL
 
@@ -13,8 +13,12 @@ PAGE_NUMBER = 1 #default
 
 
 """
+-----------------------------------------------------------
+-----------------------------------------------------------
 contains/handle the curated list creation from unsplash.
 @:parameter -> url will send the page number, if no page number found, default is 1
+-----------------------------------------------------------
+-----------------------------------------------------------
 """
 
 def get_curated_list(req):
@@ -43,7 +47,7 @@ def get_curated_list(req):
 
                 curated_cover_photo = single_photo_details(
                     feed_array[counter]['cover_photo'], counter, curated_user_display,
-                    curated_user_profile_small, curated_user_profile_large)
+                    curated_user_profile_small, curated_user_profile_large, False)
 
                 curated_collection_link_self = feed_array[counter]['links']['self']
                 curated_collection_link_html = feed_array[counter]['links']['html']
@@ -79,6 +83,8 @@ def get_curated_list(req):
 
 
 """
+-----------------------------------------------------------
+-----------------------------------------------------------
 functions take one parameter (photo_data) in JSON format and parses, create a dictionary and send it to
 Model (Photo) via Serializer.
 @:photo_data photo_data -> photo data in JSON format to parse
@@ -87,9 +93,11 @@ Model (Photo) via Serializer.
 @:profile_pic_small -> profile pic of the curated collections users
 @:profile_pic_large -> large profile pic of the curated collections users.
 @:return photo_id of the newly inserted/already existed photo id.
+-----------------------------------------------------------
+-----------------------------------------------------------
 """
 
-def single_photo_details(photo_data, counter, user_name, profile_pic_small, profile_pic_large):
+def single_photo_details(photo_data, counter, user_name, profile_pic_small, profile_pic_large, flag):
     try:
         # ---------------------------------------------
         # Dumping the only necessary data in temporary variable
@@ -101,6 +109,10 @@ def single_photo_details(photo_data, counter, user_name, profile_pic_small, prof
         photo_width = photo_data['width']
         photo_height = photo_data['height']
 
+        if flag==True:
+            curated_photo_user = photo_data['user']['name']
+            curated_photo_profile_small = photo_data['user']['profile_image']['small']
+            curated_photo_profile_large = photo_data['user']['profile_image']['large']
 
         url_thumb = photo_data['urls']['thumb']
         url_small = photo_data['urls']['small']
@@ -115,14 +127,30 @@ def single_photo_details(photo_data, counter, user_name, profile_pic_small, prof
         # ---------------------------------------------
         # Inserting dump into a dictionary to insert---
         # ---------------------------------------------
-        data = {'photo_id': photo_id, 'created_at': created_at, 'updated_at':updated_at, 'color': color,
+        if flag==True:
+            data = {
+                'photo_id': photo_id, 'created_at': created_at, 'updated_at': updated_at, 'color': color,
+                'photo_height': photo_height, 'photo_width': photo_width,
+                'url_thumb': url_thumb, 'url_small': url_small, 'url_custom': url_custom,
+                'url_raw': url_raw, 'url_full': url_full,
+                'url_regular': url_regular, 'url_download': url_download, 'url_share': url_share,
+                'user_display_name': curated_photo_user,
+                'user_profile_pic': curated_photo_profile_large,
+                'user_profile_pic_small': curated_photo_profile_small,
+                'curated_id': user_name
+            }
+        else:
+            data = {
+                'photo_id': photo_id, 'created_at': created_at, 'updated_at': updated_at, 'color': color,
                 'photo_height': photo_height, 'photo_width': photo_width,
                 'url_thumb': url_thumb, 'url_small': url_small, 'url_custom': url_custom,
                 'url_raw': url_raw, 'url_full': url_full,
                 'url_regular': url_regular, 'url_download': url_download, 'url_share': url_share,
                 'user_display_name': user_name,
                 'user_profile_pic': profile_pic_large,
-                'user_profile_pic_small': profile_pic_small}
+                'user_profile_pic_small': profile_pic_small
+            }
+
         # ---------------------------------------------
         # check serialize validation and insert--------
         # ---------------------------------------------
@@ -132,28 +160,108 @@ def single_photo_details(photo_data, counter, user_name, profile_pic_small, prof
             try:
                 photo_unique_id = serialized_data.save()
                 print str(photo_unique_id.photo_id) + " ||success for|| "+ str(counter)
-                return photo_unique_id.photo_id
+                if flag != True:
+                    return photo_unique_id.photo_id
+                else:
+                    return True
 
             except IntegrityError as db_insert_error:
                 print "Photo already exist with the same id: "+str(db_insert_error)
-                return get_single_photo(photo_id)
+                if flag == True:
+                    return False
+                else:
+                    return get_single_photo(photo_id)
 
         else:
             print " ||ERRor for|| " + str(counter)
-            return get_single_photo(photo_id)
+            if flag == True:
+                return False
+            else:
+                return get_single_photo(photo_id)
 
     except ValueError as error:
         print " ||ERRor for|| " + str(counter) + " error is "+ str(error)
-        return get_single_photo(photo_id)
+        if flag == True:
+            return False
+        else:
+            return get_single_photo(photo_id)
 
 
 """
+-----------------------------------------------------------
+-----------------------------------------------------------
 functions take one parameter (photo_id) and get/return it to
 Model (Photo) via Serializer.
 @:photo_id -> current id of the photo.
 @:return photo object id (photo_id, primary key of Photo) associate with the current photo id, if exist.
+-----------------------------------------------------------
+-----------------------------------------------------------
 """
 
 def get_single_photo(photo_id):
     single_photo = Photo.objects.get(photo_id = str(photo_id))
     return single_photo.photo_id
+
+
+
+
+
+"""
+-----------------------------------------------------------
+-----------------------------------------------------------
+functions to add curated photos of a particular list in the database. handles the list with the basis of "How many photos a collection have"
+handles curated collections list only
+-----------------------------------------------------------
+-----------------------------------------------------------
+"""
+
+
+def add_curated_photo(req):
+    if req.method == 'GET':
+        curated_id = int(req.GET.get('curated', "1"))
+
+        total_photos = get_total_photos_curated(curated_id)
+        current_page = 1
+        total_page = int(total_photos) / 10
+
+        if total_page == 0:
+            total_page = 1 #safe value, in case total photo is less than default loading
+
+        print "total page "+str(total_page) + " current page "+ str(current_page) + " for total photos "+str(total_photos)
+        while (current_page <= total_page):
+            curated_photo_feed = requests.get(UNSPLASH_BASE_URL + 'collections/curated/'+str(curated_id)+'/photos/?client_id='+ BEYBLADE_ID + '&page=' + str(current_page))
+
+            curated_collection_photo = curated_photo_feed.json()
+            success = 0
+            failure = 0
+            for counter in range(0, len(curated_collection_photo)):
+                try:
+                    status_flag = single_photo_details(curated_collection_photo[counter], counter, str(curated_id), "", "", True)
+
+                    if status_flag:
+                        success += 1
+                    else:
+                        failure += 1
+                except ValueError as error:
+                    print " ||ERRor for|| " + str(counter) + " error is " + str(error)
+
+            print "Total Success: "+str(success) + " total failure "+str(failure) + " for page "+ str(current_page)
+            current_page+= 1
+
+        return HttpResponse("Hello Add Curated")
+
+
+
+"""
+-----------------------------------------------------------
+-----------------------------------------------------------
+returns the total photos of a curated_list from the database
+to add the photos as long as needed to complete the collection
+collecting [curated]
+-----------------------------------------------------------
+-----------------------------------------------------------
+"""
+def get_total_photos_curated(curated_id):
+    curated_object = CuratedList.objects.get(curated_id = str(curated_id))
+    print "Get total photos of a curated list: "+str(curated_object.curated_total_photos)
+    return curated_object.curated_total_photos
