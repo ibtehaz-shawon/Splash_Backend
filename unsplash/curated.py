@@ -1,4 +1,5 @@
 from django.contrib.sites import requests
+from django.db import IntegrityError
 from django.http import HttpResponse
 import requests
 import json
@@ -8,16 +9,24 @@ from unsplash.serializer import PhotoSerializer, CuratedSerializer
 from unsplash_backend.settings import BEYBLADE_ID, UNSPLASH_BASE_URL
 
 
-page_number = 1 #default
+PAGE_NUMBER = 1 #default
+
+
+"""
+contains/handle the curated list creation from unsplash.
+@:parameter -> url will send the page number, if no page number found, default is 1
+"""
 
 def get_curated_list(req):
 
     if req.method == 'GET':
         curated_feed = requests.get(UNSPLASH_BASE_URL + 'collections/curated/?client_id='
-                                    + BEYBLADE_ID + '&page=' + str(1))
+                                    + BEYBLADE_ID + '&page=' + str(PAGE_NUMBER))
+        success = 0
+        failure = 0
         try:
             feed_array = curated_feed.json()
-            for counter in range(2, 3):
+            for counter in range(1, 10):
                 curated_id = feed_array[counter]['id']
                 curated_title = feed_array[counter]['title']
                 curated_description = feed_array[counter]['description']
@@ -55,22 +64,30 @@ def get_curated_list(req):
                 serialized_data = CuratedSerializer(data=data)
                 if serialized_data.is_valid():
                     serialized_data.save()
-                    print "$$$$$$ Current Counter is " + str(counter) + " and Success for " + \
-                          str(curated_id)
-                    return True
+                    print "$$$$$$ Current Counter is " + str(counter) + " and Success for " + str(curated_id)
+                    success += 1
                 else:
-                    print "###### Current Counter is " + str(counter) + " and ERROR for ||" \
-                          + str(curated_id) + "||"
+                    print "###### Current Counter is " + str(counter) + " and ERROR for ||" + str(curated_id) + "||"
+                    failure += 1
                     print serialized_data.errors
-                    return False
-            return HttpResponse("Hello World")
         except ValueError as error:
             print "No JSON file " + str(error)
-            return HttpResponse(str(error))
+
+        print "Total Success: "+str(success) + " Total Failure: "+str(failure)
+        return HttpResponse("Hello World "+ "Total Success: "+str(success) + " Total Failure: "+str(failure))
 
 
 
-
+"""
+functions take one parameter (photo_data) in JSON format and parses, create a dictionary and send it to
+Model (Photo) via Serializer.
+@:photo_data photo_data -> photo data in JSON format to parse
+@:counter counter -> current counter in the loop
+@:user_name -> to insert it with the cover photo id.
+@:profile_pic_small -> profile pic of the curated collections users
+@:profile_pic_large -> large profile pic of the curated collections users.
+@:return photo_id of the newly inserted/already existed photo id.
+"""
 
 def single_photo_details(photo_data, counter, user_name, profile_pic_small, profile_pic_large):
     try:
@@ -79,6 +96,7 @@ def single_photo_details(photo_data, counter, user_name, profile_pic_small, prof
         # ---------------------------------------------
         photo_id = photo_data['id']
         created_at = photo_data['created_at']
+        updated_at = photo_data['updated_at']
         color = photo_data['color']
         photo_width = photo_data['width']
         photo_height = photo_data['height']
@@ -97,7 +115,7 @@ def single_photo_details(photo_data, counter, user_name, profile_pic_small, prof
         # ---------------------------------------------
         # Inserting dump into a dictionary to insert---
         # ---------------------------------------------
-        data = {'photo_id': photo_id, 'created_at': created_at, 'color': color,
+        data = {'photo_id': photo_id, 'created_at': created_at, 'updated_at':updated_at, 'color': color,
                 'photo_height': photo_height, 'photo_width': photo_width,
                 'url_thumb': url_thumb, 'url_small': url_small, 'url_custom': url_custom,
                 'url_raw': url_raw, 'url_full': url_full,
@@ -109,19 +127,32 @@ def single_photo_details(photo_data, counter, user_name, profile_pic_small, prof
         # check serialize validation and insert--------
         # ---------------------------------------------
         serialized_data = PhotoSerializer(data=data)
+
         if serialized_data.is_valid():
-            photo_unique_id = serialized_data.save()
-            print str(photo_unique_id.photo_id) + " ||success for|| "+ str(counter)
-            return photo_unique_id.photo_id
+            try:
+                photo_unique_id = serialized_data.save()
+                print str(photo_unique_id.photo_id) + " ||success for|| "+ str(counter)
+                return photo_unique_id.photo_id
+
+            except IntegrityError as db_insert_error:
+                print "Photo already exist with the same id: "+str(db_insert_error)
+                return get_single_photo(photo_id)
 
         else:
             print " ||ERRor for|| " + str(counter)
             return get_single_photo(photo_id)
+
     except ValueError as error:
         print " ||ERRor for|| " + str(counter) + " error is "+ str(error)
         return get_single_photo(photo_id)
 
 
+"""
+functions take one parameter (photo_id) and get/return it to
+Model (Photo) via Serializer.
+@:photo_id -> current id of the photo.
+@:return photo object id (photo_id, primary key of Photo) associate with the current photo id, if exist.
+"""
 
 def get_single_photo(photo_id):
     single_photo = Photo.objects.get(photo_id = str(photo_id))
