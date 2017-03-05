@@ -49,7 +49,7 @@ class Photo(models.Model):
     photo_height = models.CharField(max_length=5, null=False, default="none")
     photo_width = models.CharField(max_length=5, null=False, default="none")
 
-    curated_id = models.ForeignKey('CuratedList', null=True)
+    curated_id = models.ForeignKey('CollectionList', null=True)
 
 
 #Device Data table
@@ -62,8 +62,8 @@ class DeviceData(models.Model):
 
 
 
-#Curated List
-class CuratedList(models.Model):
+#Curated List & Featured List
+class CollectionList(models.Model):
     curated_id = models.CharField(max_length=100, primary_key=True, unique=True, null=False)
     curated_title = models.CharField(max_length= 200, blank=False, null=False)
     curated_description = models.CharField(max_length=500, blank=False, null=False)
