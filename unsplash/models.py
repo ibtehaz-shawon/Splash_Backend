@@ -66,7 +66,7 @@ class DeviceData(models.Model):
 class CollectionList(models.Model):
     curated_id = models.CharField(max_length=100, primary_key=True, unique=True, null=False)
     curated_title = models.CharField(max_length= 200, blank=False, null=False)
-    curated_description = models.CharField(max_length=500, blank=False, null=False)
+    curated_description = models.CharField(max_length=500, blank=False, null=True)
 
     curated_published = models.DateTimeField('date published', null=False)
     curated_updated = models.DateTimeField('date updated', null=False)

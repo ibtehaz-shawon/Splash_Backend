@@ -9,28 +9,37 @@ from unsplash.serializer import PhotoSerializer, CuratedSerializer
 from unsplash_backend.settings import BEYBLADE_ID, UNSPLASH_BASE_URL
 
 
-PAGE_NUMBER = 1 #default
+PAGE_NUMBER = 2 #default
 
 
 """
 -----------------------------------------------------------
 -----------------------------------------------------------
 contains/handle the curated list creation from unsplash.
+example url: BASE_URL + /unsplash/collection?method=1 or 2
+method: 1-> curated collections
+method: 2-> featured collections
 @:parameter -> url will send the page number, if no page number found, default is 1
 -----------------------------------------------------------
 -----------------------------------------------------------
 """
 
 def get_curated_list(req):
-
     if req.method == 'GET':
-        curated_feed = requests.get(UNSPLASH_BASE_URL + 'collections/curated/?client_id='
+        current_method = int(req.GET.get('method', "1"))
+
+        if current_method == 1:
+            curated_feed = requests.get(UNSPLASH_BASE_URL + 'collections/curated/?client_id='
                                     + BEYBLADE_ID + '&page=' + str(PAGE_NUMBER))
+        else:
+            curated_feed = requests.get(UNSPLASH_BASE_URL + 'collections/featured/?client_id='
+                                        + BEYBLADE_ID + '&page=' + str(PAGE_NUMBER))
         success = 0
         failure = 0
+        print "Running method -> "+str(current_method)
         try:
             feed_array = curated_feed.json()
-            for counter in range(1, 10):
+            for counter in range(0, 10):
                 curated_id = feed_array[counter]['id']
                 curated_title = feed_array[counter]['title']
                 curated_description = feed_array[counter]['description']
@@ -68,10 +77,10 @@ def get_curated_list(req):
                 serialized_data = CuratedSerializer(data=data)
                 if serialized_data.is_valid():
                     serialized_data.save()
-                    print "$$$$$$ Current Counter is " + str(counter) + " and Success for " + str(curated_id)
+                    print "$$$$$$ current method: "+str(current_method)  +" Current Counter is " + str(counter) + " and Success for " + str(curated_id)
                     success += 1
                 else:
-                    print "###### Current Counter is " + str(counter) + " and ERROR for ||" + str(curated_id) + "||"
+                    print "@@@@@@ current method: "+str(current_method)  +" Current Counter is " + str(counter) + " and ERROR for ||" + str(curated_id) + "||"
                     failure += 1
                     print serialized_data.errors
         except ValueError as error:
@@ -211,32 +220,44 @@ def get_single_photo(photo_id):
 -----------------------------------------------------------
 functions to add curated photos of a particular list in the database. handles the list with the basis of "How many photos a collection have"
 handles curated collections list only
+url: BASE_URL + /unsplash/add_collection?method=1&id=1234
+method = 1 -> curated collections
+method = 2 -> featured collections
+id = 1234 (integer) -> contains id of associates curated/featured collections
 -----------------------------------------------------------
 -----------------------------------------------------------
 """
 
 
-def add_curated_photo(req):
+def add_collections_photo(req):
     if req.method == 'GET':
-        curated_id = int(req.GET.get('curated', "1"))
+        collection_id = int(req.GET.get('id', "1"))
+        current_method = int(req.GET.get('method', 1))
 
-        total_photos = get_total_photos_curated(curated_id)
+        total_photos = get_total_photos_curated(collection_id)
         current_page = 1
         total_page = int(total_photos) / 10
+        success = 0
+        failure = 0
 
         if total_page == 0:
             total_page = 1 #safe value, in case total photo is less than default loading
 
-        print "total page "+str(total_page) + " current page "+ str(current_page) + " for total photos "+str(total_photos)
-        while (current_page <= total_page):
-            curated_photo_feed = requests.get(UNSPLASH_BASE_URL + 'collections/curated/'+str(curated_id)+'/photos/?client_id='+ BEYBLADE_ID + '&page=' + str(current_page))
+        print "for current method : "+str(current_method) + " < total page "+str(total_page) + " current page "+ str(current_page) + " for total photos "+str(total_photos)
+        while (current_page <= 2):
+
+            if current_method == 1:
+                #this is curated url
+                curated_photo_feed = requests.get(UNSPLASH_BASE_URL + 'collections/curated/'+str(collection_id)+'/photos/?client_id='+ BEYBLADE_ID + '&page=' + str(current_page))
+            else:
+                #this is featured collection
+                curated_photo_feed = requests.get(UNSPLASH_BASE_URL + 'collections/' + str(
+                    collection_id) + '/photos/?client_id=' + BEYBLADE_ID + '&page=' + str(current_page))
 
             curated_collection_photo = curated_photo_feed.json()
-            success = 0
-            failure = 0
             for counter in range(0, len(curated_collection_photo)):
                 try:
-                    status_flag = single_photo_details(curated_collection_photo[counter], counter, str(curated_id), "", "", True)
+                    status_flag = single_photo_details(curated_collection_photo[counter], counter, str(collection_id), "", "", True)
 
                     if status_flag:
                         success += 1
@@ -245,10 +266,10 @@ def add_curated_photo(req):
                 except ValueError as error:
                     print " ||ERRor for|| " + str(counter) + " error is " + str(error)
 
-            print "Total Success: "+str(success) + " total failure "+str(failure) + " for page "+ str(current_page)
+            print "Current Method -> "+ str(current_method) +" Total Success: "+str(success) + " total failure "+str(failure) + " for page "+ str(current_page)
             current_page+= 1
 
-        return HttpResponse("Hello Add Curated")
+        return HttpResponse("Hello Collections "+"%s%s\n"+"Current Method -> "+ str(current_method) + " success -> "+ str(success) + " failure -> "+str(failure))
 
 
 
