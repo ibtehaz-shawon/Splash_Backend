@@ -10,5 +10,6 @@ urlpatterns = [
     url(r'^view', views.index, name='index'),
     url(r'^register_phone', register.register_phone, name="register_phone"),
     url(r'^get_curated', curated.get_curated_list, name="curated"),
+    url(r'^add_curated', curated.add_curated_photo, name="curated"),
     url(r'^$', index_view.original_index, name='original_index'),
 ]
