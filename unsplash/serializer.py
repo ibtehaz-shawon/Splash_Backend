@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Photo, CuratedList
+from .models import Photo, CollectionList
 
 
 class PhotoSerializer(serializers.ModelSerializer):
@@ -11,5 +11,5 @@ class PhotoSerializer(serializers.ModelSerializer):
 
 class CuratedSerializer(serializers.ModelSerializer):
     class Meta:
-        model = CuratedList
+        model = CollectionList
         fields = '__all__'

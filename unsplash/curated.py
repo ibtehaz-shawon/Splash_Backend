@@ -4,7 +4,7 @@ from django.http import HttpResponse
 import requests
 import json
 
-from unsplash.models import Photo, CuratedList
+from unsplash.models import Photo, CollectionList
 from unsplash.serializer import PhotoSerializer, CuratedSerializer
 from unsplash_backend.settings import BEYBLADE_ID, UNSPLASH_BASE_URL
 
@@ -262,6 +262,6 @@ collecting [curated]
 -----------------------------------------------------------
 """
 def get_total_photos_curated(curated_id):
-    curated_object = CuratedList.objects.get(curated_id = str(curated_id))
+    curated_object = CollectionList.objects.get(curated_id = str(curated_id))
     print "Get total photos of a curated list: "+str(curated_object.curated_total_photos)
     return curated_object.curated_total_photos
