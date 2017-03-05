@@ -49,9 +49,6 @@ class Photo(models.Model):
     photo_height = models.CharField(max_length=5, null=False, default="none")
     photo_width = models.CharField(max_length=5, null=False, default="none")
 
-    def __unicode__(self):
-        return unicode(self.Photo)
-
 
 #Device Data table
 
