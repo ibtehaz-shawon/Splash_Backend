@@ -1,3 +1,5 @@
+import codecs
+import unicodedata
 from django.contrib.sites import requests
 from django.db import IntegrityError
 from django.http import HttpResponse
@@ -286,3 +288,96 @@ def get_total_photos_curated(curated_id):
     curated_object = CollectionList.objects.get(curated_id = str(curated_id))
     print "Get total photos of a curated list: "+str(curated_object.curated_total_photos)
     return curated_object.curated_total_photos
+
+
+"""
+-----------------------------------------------------------
+-----------------------------------------------------------
+handles the API call to fetch and return collection information
+based on What USER needs
+@url parameter -> method 1 -> curated, method 2 -> featured collection
+-----------------------------------------------------------
+-----------------------------------------------------------
+"""
+def get_collection(request):
+    if request.method == 'GET':
+        current_method = int(request.GET.get('method', 1))
+        response_data = {}
+        collection_data = []
+        counter = 0
+
+        if current_method == 1:
+            latest_collection = CollectionList.objects.filter(curated_is_curated = True).order_by('-curated_id')
+        elif current_method == 2:
+            latest_collection = CollectionList.objects.filter(curated_is_featured=True).order_by('-curated_id')
+        else:
+            latest_collection = CollectionList.objects.filter(curated_is_curated = True).order_by('-curated_id')#safe check
+
+        try:
+            current_page = int(request.GET.get('page', "1"))
+        except ValueError as error:
+            current_page = 1
+            print str(error)
+
+        upper_limit = int(current_page * 10)
+        lower_limit = int(upper_limit) - 10 + 1
+        total = 0
+
+        print "current method "+str(current_method) + " current page "+str(current_page)
+
+        for entry in latest_collection:
+            counter += 1
+
+            if lower_limit <= counter <= upper_limit:
+                # To check if description is none
+                if entry.curated_description != None:
+                    description =  unicodedata.normalize('NFKD',entry.curated_description).encode('ascii',
+                                                                                                                   'ignore')
+                else:
+                    description = "none"
+                # To check if description is none
+
+                new_photo_data = {'collection_id': str(entry.curated_id),
+                                  'collection_title': unicodedata.normalize('NFKD', entry.curated_title).encode('ascii',
+                                                                                                                   'ignore'),
+                                  'collection_description': description,
+                                  'published': str(entry.curated_published),
+                                  'updated': str(entry.curated_updated),
+
+                                  'is_curated': str(entry.curated_is_curated),
+                                  'is_featured': str(entry.curated_is_featured),
+                                  'total_photos': str(entry.curated_total_photos),
+                                  'user_name': str(entry.curated_user_name),
+                                  'profile_image_small': str(entry.curated_profile_image_small),
+                                  'profile_image_large': str(entry.curated_profile_image_large),
+
+                                  'collection_url_self': str(entry.curated_collection_url_self),
+                                  'collection_url_html': str(entry.curated_collection_url_html),
+
+                                  'url_thumb': str(entry.curated_cover_photo.url_thumb),
+                                  'url_small': str(entry.curated_cover_photo.url_small),
+                                  'url_raw': str(entry.curated_cover_photo.url_raw),
+                                  'url_full': str(entry.curated_cover_photo.url_full),
+                                  'url_regular': str(entry.curated_cover_photo.url_regular),
+                                  'url_custom': str(entry.curated_cover_photo.url_custom),
+
+                                  'cover_color': str(entry.curated_cover_photo.color),
+                                  'cover_height': str(entry.curated_cover_photo.photo_height),
+                                  'cover_width': str(entry.curated_cover_photo.photo_width)
+                                  }
+
+                collection_data.append(new_photo_data)
+                total += 1
+
+        response_data['total'] = total
+        response_data['collections'] = collection_data
+
+        if current_method == 1:
+            response_data['is_curated'] = True
+        elif current_method == 2:
+            response_data['is_featured'] = True
+
+        return HttpResponse(json.dumps(response_data), content_type='application/json')
+    else:
+        error_response = {'error': 'error occurred', 'message': 'unknown method'}
+        return HttpResponse(json.dump(error_response), content_type='application/json')
