@@ -99,6 +99,7 @@ ENV/
 .idea/dictionaries/
 .idea/splash-backend.iml
 .idea/workspace.xml
+.idea
 unsplash/__init__.pyc
 unsplash/admin.pyc
 unsplash/apps.pyc
