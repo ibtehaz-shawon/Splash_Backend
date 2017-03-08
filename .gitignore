@@ -96,10 +96,7 @@ ENV/
 .ropeproject
 
 #.gitignore
-.idea/dictionaries/
-.idea/splash-backend.iml
-.idea/workspace.xml
-.idea
+.idea/
 unsplash/__init__.pyc
 unsplash/admin.pyc
 unsplash/apps.pyc
@@ -123,12 +120,6 @@ unsplash/migrations/0015_devicedata_unique_id.pyc
 unsplash/migrations/0016_auto_20170301_0536.pyc
 unsplash/migrations/0017_remove_devicedata_unique_id.pyc
 unsplash/migrations/0018_devicedata_unique_id.pyc
-unsplash/migrations/0019_curatedlist.pyc
-unsplash/migrations/0020_auto_20170305_0654.pyc
-unsplash/migrations/0021_auto_20170305_0701.pyc
-unsplash/migrations/0022_photo_curated_id.pyc
-unsplash/migrations/0023_auto_20170305_1030.pyc
-unsplash/migrations/0024_auto_20170305_1123.pyc
 unsplash/migrations/__init__.pyc
 unsplash/models.pyc
 unsplash/register.pyc
