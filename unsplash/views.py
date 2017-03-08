@@ -75,9 +75,10 @@ feed data 10 at a time. [updated]
 
 def get_feed(req):
     if req.method == 'GET':
-        latest_photos = Photo.objects.order_by('-created_at')
+        latest_photos = Photo.objects.filter(curated_id=None).order_by('-created_at')
         response_data = {}
         photo_data = []
+        total_photos = len(latest_photos)
         counter = 0
         try:
             current_page = int(req.GET.get('page', "1"))
@@ -128,6 +129,7 @@ def get_feed(req):
                 total += 1
 
         response_data['total'] = total
+        response_data['total_photos'] = total_photos
         response_data['photo'] = photo_data
         return HttpResponse(json.dumps(response_data), content_type='application/json')
     else:
@@ -200,7 +202,9 @@ def single_photo_details(photo_data, counter):
                 'url_raw': url_raw, 'url_full': url_full,
                 'url_regular': url_regular, 'url_download': url_download, 'url_share': url_share,
                 'user_display_name': user_display_name,
-                'user_profile_pic': user_profile_pic, 'user_profile_pic_small': user_profile_pic_small}
+                'user_profile_pic': user_profile_pic, 'user_profile_pic_small': user_profile_pic_small,
+                'curated_id': None
+                }
         # ---------------------------------------------
         # check serialize validation and insert--------
         # ---------------------------------------------

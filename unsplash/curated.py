@@ -322,6 +322,7 @@ def get_collection(request):
         upper_limit = int(current_page * 10)
         lower_limit = int(upper_limit) - 10 + 1
         total = 0
+        total_available = len(latest_collection)
 
         print "current method "+str(current_method) + " current page "+str(current_page)
 
@@ -331,8 +332,7 @@ def get_collection(request):
             if lower_limit <= counter <= upper_limit:
                 # To check if description is none
                 if entry.curated_description != None:
-                    description =  unicodedata.normalize('NFKD',entry.curated_description).encode('ascii',
-                                                                                                                   'ignore')
+                    description =  unicodedata.normalize('NFKD',entry.curated_description).encode('ascii', 'ignore')
                 else:
                     description = "none"
                 # To check if description is none
@@ -370,14 +370,105 @@ def get_collection(request):
                 total += 1
 
         response_data['total'] = total
-        response_data['collections'] = collection_data
+        response_data['total_collection_available'] = total_available
 
         if current_method == 1:
-            response_data['is_curated'] = True
+            response_data['method'] = "curated"
         elif current_method == 2:
-            response_data['is_featured'] = True
+            response_data['method'] = "featured"
 
+        response_data['collections'] = collection_data
         return HttpResponse(json.dumps(response_data), content_type='application/json')
     else:
         error_response = {'error': 'error occurred', 'message': 'unknown method'}
         return HttpResponse(json.dump(error_response), content_type='application/json')
+
+
+
+
+"""
+get the collections id and method and returns the collections photo (10 at a time)
+@:param current method -> 1 curated, 2 featured
+@:param collection_id -> collections photo
+"""
+def get_collections_photo(request):
+    response_data = {}
+    collection_data = []
+    if request.method == 'GET':
+        current_method = int(request.GET.get('method', 1)) #get the current method
+        collection_id = int(request.GET.get('collection_id', -1)) #default collection id is -1. return null
+        print "collection id "+str(collection_id) + " current method "+ str(current_method)
+
+        if collection_id == -1:
+            #handles collection error
+            response_data['total'] = 0
+            response_data['collection_id'] = collection_id
+            collection_data.append({
+                'error':True,
+                'message': 'required collection id'
+            })
+            response_data['collection_data'] = collection_data
+            return HttpResponse(json.dumps(response_data), content_type='application/json')
+        else:
+            collection_photo = Photo.objects.filter(curated_id=collection_id).order_by('-created_at')
+
+            total_collection = len(collection_photo)
+
+            current_page = int(request.GET.get('page', 1))
+
+            upper_limit = int(current_page * 10)
+            lower_limit = int(upper_limit) - 10 + 1
+            total = 0
+            counter = 0
+
+            for entry in collection_photo:
+                counter += 1
+                if lower_limit <= counter <= upper_limit:
+                    new_photo_data = {'photo_id': str(entry.photo_id),
+                                  'created_at': str(entry.created_at),
+                                  'color': str(entry.color),
+                                  'height': str(entry.photo_height),
+                                  'width': str(entry.photo_width),
+
+
+                                  'url_thumb': str(entry.url_thumb),
+                                  'url_small': str(entry.url_small),
+                                  'url_raw': str(entry.url_raw),
+                                  'url_full': str(entry.url_full),
+                                  'url_regular': str(entry.url_regular),
+                                  'url_custom': str(entry.url_custom),
+                                  'url_download': str(entry.url_download),
+                                  'url_share': str(entry.url_share),
+
+                                  'user_display_name': entry.user_display_name,
+                                  'user_profile_pic': str(entry.user_profile_pic),
+                                  'user_profile_pic_small': str(entry.user_profile_pic_small),
+                                  }
+
+                    collection_data.append(new_photo_data)
+                    total += 1
+
+            if total_collection == 0:
+                #error occurred, either no photo or invalid collection id
+                response_data['total'] = 0
+                response_data['total_collection'] = total_collection
+                response_data['collection_id'] = collection_id
+                collection_data.append({
+                    'error':True,
+                    'message': 'invalid collection id/no photo available'
+                })
+                response_data['collection_data'] = collection_data
+            else:
+                response_data['total'] = total
+                response_data['total_collection'] = total_collection
+                response_data['collection_id'] = collection_id
+                response_data['page'] = current_page
+                response_data['collection_data'] = collection_data
+        return HttpResponse(json.dumps(response_data), content_type='application/json')
+    else:
+        collection_data.append({
+            'error':True,
+            'message': 'invalid request type'
+        })
+        response_data['total_collection'] = collection_data
+        return HttpResponse(json.dumps(response_data), content_type='application/json')
