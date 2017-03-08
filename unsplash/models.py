@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 
 import uuid
+from mx.DateTime import Timezone
 
 from django.core.validators import RegexValidator
 from django.db import models
