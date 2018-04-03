@@ -1,6 +1,0 @@
-DB_Engine = 'django.db.backends.postgresql'
-DB_HOST ='ec2-23-23-225-116.compute-1.amazonaws.com'
-DB_USER = 'qtfejzbnrmuhxd'
-DB_NAME = 'deg9iiebd2oa7r'
-DB_PASSWORD = '8ebfd7af9d8a72cf24a369afc908c00865ea828172479a7c204fa583aa59be82'
-DB_PORT = '5432'
