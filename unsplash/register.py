@@ -32,7 +32,7 @@ def register_phone(request):
 
         if form.is_valid():
             register = form.save()
-            print register.unique_id
+            print (register.unique_id)
 
             success_message = {
                 'unique_id': str(register.unique_id),
@@ -45,20 +45,20 @@ def register_phone(request):
 
             # Add JSON response here
             response_data['success'] = success_message
-            print response_data
+            print (response_data)
             return HttpResponse(json.dumps(response_data), content_type='application/json')
             # open the following only if needed to view another view.
             # return render(request, template_file, context)
         else:
             if len(device_id) == 0:
                 error_message.append("Device ID required")
-                print error_message
+                print (error_message)
             if len(device_height) == 0:
                 error_message.append("Device Width required")
-                print error_message
+                print(error_message)
             if len(device_width) == 0:
                 error_message.append("Device Height required")
-                print error_message
+                print(error_message)
 
             response_data['error'] = error_message
             return HttpResponse(json.dump(response_data), content_type='application/json')

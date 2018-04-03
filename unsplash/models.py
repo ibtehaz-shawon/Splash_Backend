@@ -6,6 +6,7 @@ import uuid
 from django.core.validators import RegexValidator
 from django.db import models
 
+
 # Create your models here.
 alphanumeric = RegexValidator(r'^[0-9a-zA-Z]*$', 'Only alphanumeric characters are allowed.')
 
@@ -49,11 +50,10 @@ class Photo(models.Model):
     photo_height = models.CharField(max_length=5, null=False, default="none")
     photo_width = models.CharField(max_length=5, null=False, default="none")
 
-    curated_id = models.ForeignKey('CollectionList', null=True)
+    curated_id = models.ForeignKey('CollectionList', on_delete=models.CASCADE)
 
 
-#Device Data table
-
+# Device Data table
 class DeviceData(models.Model):
     device_id = models.CharField(max_length=100, unique=True, null=False)
     device_height = models.CharField(max_length=100, null=False)
@@ -61,8 +61,7 @@ class DeviceData(models.Model):
     unique_id = models.CharField(max_length=100, unique=True, default=uuid.uuid4, editable=False)
 
 
-
-#Curated List & Featured List
+# Curated List & Featured List
 class CollectionList(models.Model):
     curated_id = models.CharField(max_length=100, primary_key=True, unique=True, null=False)
     curated_title = models.CharField(max_length= 200, blank=False, null=False)
@@ -75,7 +74,7 @@ class CollectionList(models.Model):
     curated_is_featured = models.BooleanField(max_length=30, null=False, default=False)
     curated_total_photos = models.CharField(max_length=4, null=False, default=0)
 
-    curated_cover_photo = models.ForeignKey('Photo', null=False)
+    curated_cover_photo = models.ForeignKey('Photo', on_delete=models.CASCADE)
 
     curated_user_name = models.CharField(max_length=30, null=False, blank=False)
 

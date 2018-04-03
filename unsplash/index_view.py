@@ -24,7 +24,7 @@ def original_index(request):
             'system_language': LANGUAGE_CODE
         }
 
-        print "Total Photos: " + str(len(latest_photos))
+        print ("Total Photos: " + str(len(latest_photos)))
         return HttpResponse(template.render(context, request))
 
     else:

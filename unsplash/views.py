@@ -26,7 +26,7 @@ def index(req):
     for page_number in range(1, MAX_LOOP, 1):
         random_feed = requests.get(UNSPLASH_BASE_URL + 'photos/?client_id=' + BEYBLADE_ID + '&page=' + str(page_number))
         if random_feed.text == 'Rate Limit Exceeded':
-            print "$$$$ ---- LIMIT EXCEEDED ---- $$$$ in " + str(page_number)
+            print ("$$$$ ---- LIMIT EXCEEDED ---- $$$$ in " + str(page_number))
             html_message = "$$$$ ---- LIMIT EXCEEDED ---- $$$$ in " + str(page_number) \
                            + " Total Success: " + str(total_success) + " Total Failure: " + str(total_failure)
             return HttpResponse(html_message)
@@ -35,7 +35,7 @@ def index(req):
             try:
                 feed_array = random_feed.json()
             except ValueError as error:
-                print "No JSON file "+str(error)
+                print ("No JSON file "+str(error))
                 return HttpResponse(str(error))
 
             for counter in range(0, 10):
@@ -45,7 +45,7 @@ def index(req):
                     '&w=' + str(CUSTOM_WIDTH) + '&h=' + str(CUSTOM_HEIGHT))
 
                 if photo_details_url.text == 'Rate Limit Exceeded':
-                    print "$$$$ ---- LIMIT EXCEEDED ---- $$$$ in " + str(page_number)
+                    print ("$$$$ ---- LIMIT EXCEEDED ---- $$$$ in " + str(page_number))
                     html_message = "$$$$ ---- LIMIT EXCEEDED ---- $$$$ in " + str(page_number) \
                                    + " Total Success: " + str(total_success) + " Total Failure: " + str(total_failure)
                     return HttpResponse(html_message)
@@ -58,7 +58,7 @@ def index(req):
                 else:
                     total_failure += 1
 
-    print "Total Success: " + str(total_success) + " Total Failure: " + str(total_failure)
+    print ("Total Success: " + str(total_success) + " Total Failure: " + str(total_failure))
     return HttpResponse("Total Success: " + str(total_success) + " Total Failure: " + str(total_failure))
 
 
@@ -82,10 +82,10 @@ def get_feed(req):
         counter = 0
         try:
             current_page = int(req.GET.get('page', "1"))
-            print req.GET.get('page', "1")
+            print (req.GET.get('page', "1"))
         except ValueError as error:
             current_page = 1
-            print str(error)
+            print (str(error))
 
         upper_limit = int(current_page * 10)
         lower_limit = int(upper_limit) - 10 + 1
@@ -211,12 +211,12 @@ def single_photo_details(photo_data, counter):
         serialized_data = PhotoSerializer(data=data)
         if serialized_data.is_valid():
             serialized_data.save()
-            print "$$$$$$ Current Counter is " + str(counter) + " and Success for " + photo_id
+            print ("$$$$$$ Current Counter is " + str(counter) + " and Success for " + photo_id)
             return True
         else:
-            print "###### Current Counter is " + str(counter) + " and ERROR for ||" + photo_id + "||"
-            print serialized_data.errors
+            print ("###### Current Counter is " + str(counter) + " and ERROR for ||" + photo_id + "||")
+            print (serialized_data.errors)
             return False
     except ValueError as error:
-        print "Error occurred "+str(error)
+        print ("Error occurred "+str(error))
         return False
