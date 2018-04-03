@@ -131,3 +131,5 @@ unsplash_backend/__init__.pyc
 unsplash_backend/settings.pyc
 unsplash_backend/urls.pyc
 unsplash_backend/wsgi.pyc
+unsplash_backend/dev_config.py
+virtualEnv/

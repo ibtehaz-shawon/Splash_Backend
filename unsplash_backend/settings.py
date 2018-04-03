@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 
 import os
 import dj_database_url
+from dev_config import *
 
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -89,12 +90,12 @@ WSGI_APPLICATION = 'unsplash_backend.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'HOST': 'ec2-23-23-225-116.compute-1.amazonaws.com',
-        'USER': 'qtfejzbnrmuhxd',
-        'NAME': 'deg9iiebd2oa7r',
-        'PASSWORD': '8ebfd7af9d8a72cf24a369afc908c00865ea828172479a7c204fa583aa59be82',
-        'PORT': '5432',
+        'ENGINE': DB_Engine,
+        'HOST': DB_HOST,
+        'USER': DB_USER,
+        'NAME': DB_NAME,
+        'PASSWORD': DB_PASSWORD,
+        'PORT': DB_PORT,
     },
 }
 
