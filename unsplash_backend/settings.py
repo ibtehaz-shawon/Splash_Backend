@@ -11,27 +11,31 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 """
 
 import os
+import dj_database_url
+from decouple import config
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+from django.conf.global_settings import DATABASES
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
 # SECRET_KEY = os.environ.get("Splash_Secret_Key", "")
-SECRET_KEY = '$(bi@q9h3-kqdk3)2+$@bkunic79(a3lfk2acx9wpnp440a3w9'
+SECRET_KEY = config('Splash_Secret_Key')
 # ------------ Beyblade ID ------------------------------------------------------
 # BEYBLADE_ID = os.environ.get("Splash_Key_One", "")
-BEYBLADE_ID = 'badb97318ed82cec37d0fb85539b695a3d183a9ca6d2fd97bb4d10289b9ff0fe'
+BEYBLADE_ID = config('Splash_Key_One')
 # ------------ Beyblade ID ------------------------------------------------------
 # ------------ Pokemon ID ------------------------------------------------------
 # POKEMON_ID = os.environ.get("Splash_Key_Two", "")
-POKEMON_ID = '315bdb58e7c9bdfb40ccf17e566abaed60d7377b7dc727f3c4cf2a91306e386d'
+POKEMON_ID = config('Splash_Key_Two')
 # ------------ Pokemon ID ------------------------------------------------------
 UNSPLASH_BASE_URL = 'https://api.unsplash.com/'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config('DEBUG', default=True, cast=bool)
 
 ALLOWED_HOSTS = ['*']
 
@@ -86,17 +90,7 @@ WSGI_APPLICATION = 'unsplash_backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'HOST': 'ec2-23-23-225-116.compute-1.amazonaws.com',
-        'USER': 'qtfejzbnrmuhxd',
-        'NAME': 'deg9iiebd2oa7r',
-        'PASSWORD': '8ebfd7af9d8a72cf24a369afc908c00865ea828172479a7c204fa583aa59be82',
-        'PORT': '5432',
-    },
-}
-
+DATABASES['default'] = dj_database_url.config(config('DATABASE_URL'), conn_max_age=600)
 
 # Password validation
 # https://docs.djangoproject.com/en/1.10/ref/settings/#auth-password-validators

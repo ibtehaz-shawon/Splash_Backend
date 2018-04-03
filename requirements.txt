@@ -10,6 +10,7 @@ packaging==17.1
 psycopg2==2.7.4
 psycopg2-binary==2.7.4
 pyparsing==2.2.0
+python-decouple==3.1
 pytz==2018.3
 requests==2.18.4
 six==1.11.0
