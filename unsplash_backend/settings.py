@@ -23,12 +23,12 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '$(bi@q9h3-kqdk3)2+$@bkunic79(a3lfk2acx9wpnp440a3w9'
+SECRET_KEY = SECRETKEY
 # ------------ Beyblade ID ------------------------------------------------------
-BEYBLADE_ID = 'badb97318ed82cec37d0fb85539b695a3d183a9ca6d2fd97bb4d10289b9ff0fe'
+BEYBLADE_ID = BEYBLADEID
 # ------------ Beyblade ID ------------------------------------------------------
 # ------------ Pokemon ID ------------------------------------------------------
-POKEMON_ID = '315bdb58e7c9bdfb40ccf17e566abaed60d7377b7dc727f3c4cf2a91306e386d'
+POKEMON_ID = POKEMONID
 # ------------ Pokemon ID ------------------------------------------------------
 UNSPLASH_BASE_URL = 'https://api.unsplash.com/'
 
