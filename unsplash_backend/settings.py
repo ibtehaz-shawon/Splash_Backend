@@ -11,24 +11,22 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 """
 
 import os
-import dj_database_url
-from dev_config import *
-
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = SECRETKEY
+# SECRET_KEY = os.environ.get("Splash_Secret_Key", "")
+SECRET_KEY = '$(bi@q9h3-kqdk3)2+$@bkunic79(a3lfk2acx9wpnp440a3w9'
 # ------------ Beyblade ID ------------------------------------------------------
-BEYBLADE_ID = BEYBLADEID
+# BEYBLADE_ID = os.environ.get("Splash_Key_One", "")
+BEYBLADE_ID = 'badb97318ed82cec37d0fb85539b695a3d183a9ca6d2fd97bb4d10289b9ff0fe'
 # ------------ Beyblade ID ------------------------------------------------------
 # ------------ Pokemon ID ------------------------------------------------------
-POKEMON_ID = POKEMONID
+# POKEMON_ID = os.environ.get("Splash_Key_Two", "")
+POKEMON_ID = '315bdb58e7c9bdfb40ccf17e566abaed60d7377b7dc727f3c4cf2a91306e386d'
 # ------------ Pokemon ID ------------------------------------------------------
 UNSPLASH_BASE_URL = 'https://api.unsplash.com/'
 
@@ -90,12 +88,12 @@ WSGI_APPLICATION = 'unsplash_backend.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': DB_Engine,
-        'HOST': DB_HOST,
-        'USER': DB_USER,
-        'NAME': DB_NAME,
-        'PASSWORD': DB_PASSWORD,
-        'PORT': DB_PORT,
+        'ENGINE': 'django.db.backends.postgresql',
+        'HOST': 'ec2-23-23-225-116.compute-1.amazonaws.com',
+        'USER': 'qtfejzbnrmuhxd',
+        'NAME': 'deg9iiebd2oa7r',
+        'PASSWORD': '8ebfd7af9d8a72cf24a369afc908c00865ea828172479a7c204fa583aa59be82',
+        'PORT': '5432',
     },
 }
 
@@ -135,6 +133,8 @@ USE_L10N = True
 USE_TZ = True
 
 
+# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
@@ -144,10 +144,6 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = (
     os.path.join(PROJECT_ROOT, 'static'),
 )
-
-# Update database configuration with $DATABASE_URL.
-db_from_env = dj_database_url.config(conn_max_age=500)
-DATABASES['default'].update(db_from_env)
 
 # Simplified static file serving.
 # https://warehouse.python.org/project/whitenoise/

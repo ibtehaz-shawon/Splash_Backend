@@ -38,7 +38,7 @@ def get_curated_list(req):
                                         + BEYBLADE_ID + '&page=' + str(PAGE_NUMBER))
         success = 0
         failure = 0
-        print "Running method -> "+str(current_method)
+        print ("Running method -> "+str(current_method))
         try:
             feed_array = curated_feed.json()
             for counter in range(0, 10):
@@ -79,16 +79,16 @@ def get_curated_list(req):
                 serialized_data = CuratedSerializer(data=data)
                 if serialized_data.is_valid():
                     serialized_data.save()
-                    print "$$$$$$ current method: "+str(current_method)  +" Current Counter is " + str(counter) + " and Success for " + str(curated_id)
+                    print ("$$$$$$ current method: "+str(current_method)  +" Current Counter is " + str(counter) + " and Success for " + str(curated_id))
                     success += 1
                 else:
-                    print "@@@@@@ current method: "+str(current_method)  +" Current Counter is " + str(counter) + " and ERROR for ||" + str(curated_id) + "||"
+                    print ("@@@@@@ current method: "+str(current_method)  +" Current Counter is " + str(counter) + " and ERROR for ||" + str(curated_id) + "||")
                     failure += 1
-                    print serialized_data.errors
+                    print (serialized_data.errors)
         except ValueError as error:
-            print "No JSON file " + str(error)
+            print ("No JSON file " + str(error))
 
-        print "Total Success: "+str(success) + " Total Failure: "+str(failure)
+        print ("Total Success: "+str(success) + " Total Failure: "+str(failure))
         return HttpResponse("Hello World "+ "Total Success: "+str(success) + " Total Failure: "+str(failure))
 
 
@@ -120,7 +120,7 @@ def single_photo_details(photo_data, counter, user_name, profile_pic_small, prof
         photo_width = photo_data['width']
         photo_height = photo_data['height']
 
-        if flag==True:
+        if flag:
             curated_photo_user = photo_data['user']['name']
             curated_photo_profile_small = photo_data['user']['profile_image']['small']
             curated_photo_profile_large = photo_data['user']['profile_image']['large']
@@ -170,29 +170,29 @@ def single_photo_details(photo_data, counter, user_name, profile_pic_small, prof
         if serialized_data.is_valid():
             try:
                 photo_unique_id = serialized_data.save()
-                print str(photo_unique_id.photo_id) + " ||success for|| "+ str(counter)
+                print (str(photo_unique_id.photo_id) + " ||success for|| "+ str(counter))
                 if flag != True:
                     return photo_unique_id.photo_id
                 else:
                     return True
 
             except IntegrityError as db_insert_error:
-                print "Photo already exist with the same id: "+str(db_insert_error)
-                if flag == True:
+                print ("Photo already exist with the same id: "+str(db_insert_error))
+                if flag:
                     return False
                 else:
                     return get_single_photo(photo_id)
 
         else:
-            print " ||ERRor for|| " + str(counter)
-            if flag == True:
+            print (" ||ERRor for|| " + str(counter))
+            if flag:
                 return False
             else:
                 return get_single_photo(photo_id)
 
     except ValueError as error:
-        print " ||ERRor for|| " + str(counter) + " error is "+ str(error)
-        if flag == True:
+        print (" ||ERRor for|| " + str(counter) + " error is "+ str(error))
+        if flag:
             return False
         else:
             return get_single_photo(photo_id)
@@ -245,7 +245,7 @@ def add_collections_photo(req):
         if total_page == 0:
             total_page = 1 #safe value, in case total photo is less than default loading
 
-        print "for current method : "+str(current_method) + " < total page "+str(total_page) + " current page "+ str(current_page) + " for total photos "+str(total_photos)
+        print ("for current method : "+str(current_method) + " < total page "+str(total_page) + " current page "+ str(current_page) + " for total photos "+str(total_photos))
         while (current_page <= 2):
 
             if current_method == 1:
@@ -266,9 +266,9 @@ def add_collections_photo(req):
                     else:
                         failure += 1
                 except ValueError as error:
-                    print " ||ERRor for|| " + str(counter) + " error is " + str(error)
+                    print (" ||ERRor for|| " + str(counter) + " error is " + str(error))
 
-            print "Current Method -> "+ str(current_method) +" Total Success: "+str(success) + " total failure "+str(failure) + " for page "+ str(current_page)
+            print ("Current Method -> "+ str(current_method) +" Total Success: "+str(success) + " total failure "+str(failure) + " for page "+ str(current_page))
             current_page+= 1
 
         return HttpResponse("Hello Collections "+"%s%s\n"+"Current Method -> "+ str(current_method) + " success -> "+ str(success) + " failure -> "+str(failure))
@@ -286,7 +286,7 @@ collecting [curated]
 """
 def get_total_photos_curated(curated_id):
     curated_object = CollectionList.objects.get(curated_id = str(curated_id))
-    print "Get total photos of a curated list: "+str(curated_object.curated_total_photos)
+    print ("Get total photos of a curated list: "+str(curated_object.curated_total_photos))
     return curated_object.curated_total_photos
 
 
@@ -317,14 +317,14 @@ def get_collection(request):
             current_page = int(request.GET.get('page', "1"))
         except ValueError as error:
             current_page = 1
-            print str(error)
+            print (str(error))
 
         upper_limit = int(current_page * 10)
         lower_limit = int(upper_limit) - 10 + 1
         total = 0
         total_available = len(latest_collection)
 
-        print "current method "+str(current_method) + " current page "+str(current_page)
+        print ("current method "+str(current_method) + " current page "+str(current_page))
 
         for entry in latest_collection:
             counter += 1
@@ -397,7 +397,7 @@ def get_collections_photo(request):
     if request.method == 'GET':
         current_method = int(request.GET.get('method', 1)) #get the current method
         collection_id = int(request.GET.get('collection_id', -1)) #default collection id is -1. return null
-        print "collection id "+str(collection_id) + " current method "+ str(current_method)
+        print ("collection id "+str(collection_id) + " current method "+ str(current_method))
 
         if collection_id == -1:
             #handles collection error
