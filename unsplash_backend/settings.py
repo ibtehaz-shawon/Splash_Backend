@@ -9,32 +9,14 @@ https://docs.djangoproject.com/en/1.10/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.10/ref/settings/
 """
-
 import os
-import dj_database_url
 from decouple import config
 
-# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-from django.conf.global_settings import DATABASES
-
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
-# SECRET_KEY = os.environ.get("Splash_Secret_Key", "")
 SECRET_KEY = config('Splash_Secret_Key')
-# ------------ Beyblade ID ------------------------------------------------------
-# BEYBLADE_ID = os.environ.get("Splash_Key_One", "")
 BEYBLADE_ID = config('Splash_Key_One')
-# ------------ Beyblade ID ------------------------------------------------------
-# ------------ Pokemon ID ------------------------------------------------------
-# POKEMON_ID = os.environ.get("Splash_Key_Two", "")
 POKEMON_ID = config('Splash_Key_Two')
-# ------------ Pokemon ID ------------------------------------------------------
 UNSPLASH_BASE_URL = 'https://api.unsplash.com/'
-
-# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=True, cast=bool)
 
 ALLOWED_HOSTS = ['*']
@@ -90,7 +72,8 @@ WSGI_APPLICATION = 'unsplash_backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
 
-DATABASES['default'] = dj_database_url.config(config('DATABASE_URL'), conn_max_age=600)
+from db_config import db_url_parsing
+DATABASES = {'default': db_url_parsing(config('DATABASE_URL'))}
 
 # Password validation
 # https://docs.djangoproject.com/en/1.10/ref/settings/#auth-password-validators
@@ -127,18 +110,11 @@ USE_L10N = True
 USE_TZ = True
 
 
-# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/1.10/howto/static-files/
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 STATIC_ROOT = os.path.join(PROJECT_ROOT, 'staticfiles')
 STATIC_URL = '/static/'
-# Extra places for collectstatic to find static files.
 STATICFILES_DIRS = (
     os.path.join(PROJECT_ROOT, 'static'),
 )
-
-# Simplified static file serving.
-# https://warehouse.python.org/project/whitenoise/
 STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
